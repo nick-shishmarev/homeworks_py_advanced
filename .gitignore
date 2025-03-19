@@ -1,0 +1,11 @@
+temp/
+mine/
+venv*/
+.idea/
+*.log
+*.tmp
+*.ini
+*.env
+Thumbs.db
+__pycache__/
+
