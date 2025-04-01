@@ -50,3 +50,4 @@ for article in article_list:
 
     if re.findall(regex, text, re.I):
         print(f"{article_time}  -  {article_name}  -  {article_link}")
+
