@@ -9,31 +9,32 @@ from fake_headers import Headers
 KEYWORDS = ['дизайн', 'фото', 'web', 'python']
 
 # Ваш код
-regex = '|'.join(KEYWORDS)
 
 url = 'https://habr.com'
 url_tail = '/ru/articles/'
 
-response = requests.get(url+url_tail, headers=Headers(browser='chrome', os='win').generate())
+headers = Headers(browser='chrome', os='win').generate()
+regex = re.compile('|'.join(f"\\b{kw}\\b" for kw in KEYWORDS), re.IGNORECASE)
 
+response = requests.get(url+url_tail, headers=headers)
+response.raise_for_status()
 soup = bs4.BeautifulSoup(response.text, features='lxml')
 
-article_list = soup.find_all('article', class_='tm-articles-list__item')
-
-for article in article_list:
+for article in soup.find_all('article', class_='tm-articles-list__item'):
+    title_tag = article.find('a', class_='tm-title__link')
+    article_name = title_tag.span.text
+    article_link = f"{url}{title_tag['href']}"
     article_time = article.find('time')['title']
-    article_name = article.find('a', class_='tm-title__link').span.text
-    article_link = f"{url}{article.find('a', class_='tm-title__link')['href']}"
-    article_preview = article.find('div', class_='tm-article-body tm-article-snippet__lead')
 
-    if article_preview:
-        text = ' '.join(c.text.strip() for c in article_preview)
+    preview_tag = article.find('div', class_='tm-article-body tm-article-snippet__lead')
+    preview_txt = preview_tag.get_text(separator=' ') if preview_tag else ''
 
-        if re.findall(regex, text, re.I):
-            print(f"{article_time}  -  {article_name}  -  {article_link}")
-            continue
+    if regex.search(preview_txt):
+        print(f"{article_time}  -  {article_name}  -  {article_link}")
+        continue
 
-    response = requests.get(article_link, headers=Headers(browser='chrome', os='win').generate())
+    response = requests.get(article_link, headers=headers)
+    response.raise_for_status()
     soup = bs4.BeautifulSoup(response.text, features='lxml')
 
     article_body = soup.find(
@@ -46,8 +47,7 @@ for article in article_list:
     else:
         article_text = []
 
-    text = ' '.join(c.text.strip() for c in article_text)
+    text = article_body.get_text(separator=' ') if article_body else ''
 
-    if re.findall(regex, text, re.I):
+    if regex.search(text):
         print(f"{article_time}  -  {article_name}  -  {article_link}")
-
