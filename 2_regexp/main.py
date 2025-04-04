@@ -6,10 +6,11 @@ def make_phone(ph: str):
     # Приведение номеров телефонов к виду +7(999)999-99-99 доб.9999
     if ph == "phone":
         return ph
-    pattern = r'(\+7|8)?\s?\(?(\d{3})\)?[-\s]?(\d{3})[-\s]?(\d\d)[-\s]?(\d\d)\s*\(?(доб.)?\s*(\d*)\)?'
+    pattern = r'(\+7|8)?\s*\(?(\d{3})\)?[-\s]*(\d{3})[-\s]*(\d\d)[-\s]*(\d\d)\s*\(?(доб.)?\s*(\d*)\)?'
     repl_pattern = r'+7(\2)\3-\4-\5 \6\7'
 
     if re.match(pattern, ph):
+        ph = ph.replace(" ", "")
         res = re.sub(pattern, repl_pattern, ph).strip()
     else:
         res = ''
