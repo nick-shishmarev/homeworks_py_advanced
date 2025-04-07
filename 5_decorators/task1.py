@@ -3,8 +3,6 @@ from datetime import datetime as dt
 
 
 def logger(old_function):
-    # ...
-
     def new_function(*args, **kwargs):
         file_name = 'main.log'
         start = dt.now()
@@ -14,7 +12,7 @@ def logger(old_function):
             f.write(out_str)
 
         return result
-    #
+
     return new_function
 
 
