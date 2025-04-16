@@ -36,7 +36,7 @@ class Mail:
         result, data = mails.uid('search', None, criterion)
         if not data:
             return None
-        # assert data[0], 'There are no letters with current header'
+
         latest_email_uid = data[0].split()[-1]
         result, data = mails.uid('fetch', latest_email_uid, '(RFC822)')
         raw_email = (data[0][1])
@@ -51,8 +51,6 @@ if __name__ == '__main__':
     gmail_imap = "imap.gmail.com"
     load_dotenv()
     password = getenv('psw')
-
-    # 'xmuc ipzb euuq xljf'
 
     mail = Mail(gmail_smtp, gmail_imap, psw=password)
 
